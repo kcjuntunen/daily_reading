@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/bin/env python3
 """
     Get a daily reading.
     Copyright (C) 2015  K. C. Juntunen
@@ -16,61 +16,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-
-import json
-import sys
-import time
-import datetime
-
-class DailyReading(object):
-    """
-Takes a json file, and can print a daily reading passage.
-    """
-    def __init__(self, file_name):
-        self.json_file = file_name
-        try:
-            with open(self.json_file, "r") as jf:
-                self.schedule = json.load(jf)
-        except IOError as ioe:
-            sys.stderr.write("Couldn't open {}:\n{}: {}".format(
-                self.json_file, ioe.errno, ioe.message))
-
-    def print_passages(self):
-        """
-        Prints a nicely formatted passage list.
-        """
-        info = self.schedule.get("info")
-        date_string = todays_date()
-        hbar_length = len(info) + len(date_string) + 4
-
-        message = "{} -- {}\n{}\n{}\n".format(
-            self.schedule.get("info"),
-            date_string,
-            "=" * hbar_length,
-            ", ".join(self.schedule.get("data2")[day_of_year() - 1]))
-
-        sys.stdout.writelines(message)
-
-def todays_date():
-    """
-    Returns today's date as a string.
-    """
-    now = datetime.datetime.now()
-    return "{}-{}-{}".format(now.year, now.month, now.day)
-
-def day_of_year():
-    """
-    Returns the day of the year as an integer.
-    """
-    return int(time.strftime("%j"))
+from daily_reading import *
 
 if __name__ == "__main__":
     from optparse import OptionParser
     prsr = OptionParser()
-    prsr.add_option("-p", "--plan", dest="json_file",
-                    help="Reading plan; FILE in json format", metavar="FILE")
+    prsr.add_option("-p", "--plan"
+                    , dest="json_file",
+                    help="Reading plan; FILE in json format"
+                    , metavar="FILE")
 
     (options, args) = prsr.parse_args()
     pasg = DailyReading(options.json_file)
     pasg.print_passages()
-
