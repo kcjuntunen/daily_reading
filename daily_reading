@@ -1,12 +1,31 @@
 #!/bin/env python
+"""
+    Get a daily reading.
+    Copyright (C) 2015  K. C. Juntunen
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
 
 import json
 import sys
 import time
 import datetime
-import os
 
 class DailyReading(object):
+    """
+Takes a json file, and can print a daily reading passage.
+    """
     def __init__(self, file_name):
         self.json_file = file_name
         try:
@@ -16,25 +35,34 @@ class DailyReading(object):
             sys.stderr.write("Couldn't open {}:\n{}: {}".format(
                 self.json_file, ioe.errno, ioe.message))
 
-    def todays_date(self):
-        now = datetime.datetime.now()
-        return "{}-{}-{}".format(now.year, now.month, now.day)
-
-    def day_of_year(self):
-        return int(time.strftime("%j"))
-
     def print_passages(self):
+        """
+        Prints a nicely formatted passage list.
+        """
         info = self.schedule.get("info")
-        date_string = self.todays_date()
+        date_string = todays_date()
         hbar_length = len(info) + len(date_string) + 4
 
         message = "{} -- {}\n{}\n{}\n".format(
             self.schedule.get("info"),
-            self.todays_date(),
+            date_string,
             "=" * hbar_length,
-            ", ".join(self.schedule.get("data2")[self.day_of_year() - 1]))
+            ", ".join(self.schedule.get("data2")[day_of_year() - 1]))
 
         sys.stdout.writelines(message)
+
+def todays_date():
+    """
+    Returns today's date as a string.
+    """
+    now = datetime.datetime.now()
+    return "{}-{}-{}".format(now.year, now.month, now.day)
+
+def day_of_year():
+    """
+    Returns the day of the year as an integer.
+    """
+    return int(time.strftime("%j"))
 
 if __name__ == "__main__":
     from optparse import OptionParser
