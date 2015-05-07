@@ -58,6 +58,9 @@ class DailyReading(object):
             return
 
     def get_passages(self):
+        """
+        Return a list containing todays passages.
+        """
         if self.schedule is not None:
             return self.schedule.get("data2")[day_of_year() - 1]
         else:
