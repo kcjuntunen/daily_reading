@@ -18,14 +18,42 @@
 """
 from daily_reading import *
 
-if __name__ == "__main__":
-    from optparse import OptionParser
-    prsr = OptionParser()
-    prsr.add_option("-p", "--plan"
+def main():
+    from argparse import ArgumentParser
+    #import pysword.pysword
+    prsr = ArgumentParser()
+    prsr.add_argument("-j", "--json"
                     , dest="json_file",
                     help="Reading plan; FILE in json format"
                     , metavar="FILE")
+    prsr.add_argument("-l", "--list", action="store_true",
+                    help="Print as a list for redirection or processing.")
 
-    (options, args) = prsr.parse_args()
-    pasg = DailyReading(options.json_file)
-    pasg.print_passages()
+    args = prsr.parse_args()
+    pasg = DailyReading(args.json_file)
+    pl = pasg.get_passages()
+    
+    if not args.list:
+      pasg.print_passages()
+    else:
+    
+      #z = pysword.ZModule("kjv")
+
+      formatted_passage_list = []
+      for i in pl:
+          book, chapter = i.split()
+
+          if '-' in chapter:
+              first, last = chapter.split('-')
+              for j in range(int(first), int(last) + 1):
+                  formatted_passage_list.append(book + ' ' + str(j))
+          else:
+              formatted_passage_list.append(book + ' ' + chapter)
+
+      for i in formatted_passage_list:
+          book, chapter = i.split()
+          verse = 1
+          print(i)
+
+if __name__ == "__main__":
+  main()

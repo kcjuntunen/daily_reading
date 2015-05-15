@@ -1,4 +1,3 @@
-#!/bin/env python3
 """
     Get a daily reading.
     Copyright (C) 2015  K. C. Juntunen
@@ -84,12 +83,18 @@ class DailyReading(object):
         sys.stdout.writelines(message)
 
 if __name__ == "__main__":
-    from optparse import OptionParser
-    prsr = OptionParser()
-    prsr.add_option("-p", "--plan", dest="json_file",
+    from argparse import ArgumentParser
+    prsr = ArgumentParser()
+    prsr.add_argument("-j", "--json", dest="json_file",
                     help="Reading plan; FILE in json format", metavar="FILE")
+    prsr.add_argument("-p", "--pretty", action="store_true")
 
-    (options, args) = prsr.parse_args()
-    pasg = DailyReading(options.json_file)
-    pasg.print_passages()
+    args = prsr.parse_args()
+    pasg = DailyReading(args.json_file)
+    
+    if args.pretty:
+      pasg.print_passages()
+    else:
+      for x in pasg.get_passages():
+        print(x)
 
